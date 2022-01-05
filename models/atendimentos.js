@@ -21,6 +21,14 @@ class Atendimento {
         mensagem: "Cliente deve ter pelo menos cinco caracteres",
       },
     ];
+
+    this.valida = (parametros) => {
+      this.validacoes.filter((campo) => {
+        const { nome } = campo;
+        const parametro = parametros[nome];
+        return !campo.valido(parametro);
+      });
+    };
   }
 
   adiciona(atendimento) {
@@ -34,7 +42,7 @@ class Atendimento {
       cliente: { tamanho: atendimento.cliente.length },
     };
 
-    const erros = this.validacoes.filter((campo) => !campo.valido);
+    const erros = this.valida(parametros);
     const existemErros = erros.length;
 
     if (existemErros) {
@@ -49,16 +57,8 @@ class Atendimento {
     }
   }
 
-  lista(res) {
-    const sql = "SELECT * FROM Atendimentos";
-
-    conexao.query(sql, (erro, resultados) => {
-      if (erro) {
-        res.status(400).json(erro);
-      } else {
-        res.status(200).json(resultados);
-      }
-    });
+  lista() {
+    return repositorio.lista();
   }
 
   buscaPorId(id, res) {
